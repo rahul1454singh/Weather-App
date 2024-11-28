@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+</head>
+
+
+
+
+<style>
+   * {
+       margin: 0;
+       padding: 0;
+       font-family: "Poppins", sans-serif;
+       box-sizing: border-box;
+   }
+
+   body {
+       background: #222;
+   }
+
+   .card {
+       width: 90%;
+       max-width: 470px;
+       background: linear-gradient(135deg, hwb(181 12% 35%), #5b548a);
+       color: #fff;
+       margin: 100px auto 0;
+       border-radius: 20px;
+       padding: 40px 35px;
+       text-align: center;
+   }
+
+   .search {
+       width: 100%;
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+   }
+
+   .search input {
+       border: 0;
+       outline: 0;
+       background-color: #ebfffc;
+       color: #555;
+       padding: 10px 25px;
+       height: 60px;
+       border-radius: 30px;
+       flex: 1;
+       margin-right: 16px;
+       font-size: 18px;
+   }
+
+   .search button {
+       border: 0;
+       outline: 0;
+       background-color: #ebfffc;
+       width: 60px;
+       height: 60px;
+       cursor: pointer;
+       border-radius: 50%;
+   }
+
+   .search button img {
+       width: 50px;
+   }
+
+   .weather-icon {
+       width: 100px;
+       margin: 30px;
+   }
+
+   .weather h1 {
+       font-size: 40px;
+       font-weight: 300;
+   }
+
+   .weather h2 {
+       font-size: 45px;
+       font-weight: 400;
+       margin-top: -10px;
+   }
+
+   .details {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       padding: 0 20px;
+       margin-top: 40px;
+   }
+
+   .col {
+       display: flex;
+       align-items: center;
+       text-align: left;
+   }
+
+   .col img {
+       width: 40px;
+       margin-right: 10px;
+   }
+
+   .humidity, .wind {
+       font-size: 20px;
+       margin-top: -6px;
+   }
+
+   .weather {
+       display: none;
+   }
+
+   .error {
+       text-align: left;
+       margin-left: 10px;
+       font-size: 14px;
+       margin-top: 10px;
+       display: none;
+   }
+
+   
+   @media (max-width: 768px) {
+       .card {
+           padding: 30px 25px;
+           margin: 60px auto;
+       }
+
+       .search input {
+           font-size: 16px;
+           padding: 10px 20px;
+       }
+
+       .search button {
+           width: 50px;
+           height: 50px;
+       }
+
+       .weather h1 {
+           font-size: 35px;
+       }
+
+       .weather h2 {
+           font-size: 40px;
+       }
+
+       .details {
+           flex-direction: column;
+           align-items: flex-start;
+           margin-top: 20px;
+       }
+
+       .col {
+           width: 100%;
+           margin-bottom: 15px;
+       }
+
+       .col img {
+           width: 30px;
+       }
+
+       .humidity, .wind {
+           font-size: 18px;
+       }
+   }
+
+   @media (max-width: 480px) {
+       .card {
+           padding: 20px 15px;
+       }
+
+       .search input {
+           font-size: 14px;
+           padding: 8px 15px;
+       }
+
+       .search button {
+           width: 40px;
+           height: 40px;
+       }
+
+       .weather h1 {
+           font-size: 30px;
+       }
+
+       .weather h2 {
+           font-size: 35px;
+       }
+
+       .details {
+           flex-direction: column;
+           align-items: flex-start;
+       }
+
+       .col {
+           width: 100%;
+           margin-bottom: 10px;
+       }
+
+       .col img {
+           width: 25px;
+       }
+
+       .humidity, .wind {
+           font-size: 16px;
+       }
+   }
+
+</style>
+
+
+<body>
+
+<div class="card">
+    <div class="search">
+        <input type="text" placeholder="Enter City Name" spellcheck="false">
+         <button><img src="searchimage.png"></button>
+    </div>
+    <div class="error">
+      <p>Invalid City Name</p>
+    </div>
+    <div class="weather">
+        <img src="rainimag.png" class="weather-icon">
+        <h1 class="temp">22°C</h1>
+        <h2 class="city">Mumbai</h2>
+        <div class="details">
+        <div class="col">
+            <img src="humidity image.png">
+            <p class="humidity">50%</p>
+            <p>Humidity</p>
+        </div>
+        <div class="col">
+            <img src="windimage.png">
+            <p class="wind">50%</p>
+            <p>wind speed</p>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+
+<script>
+const apikey = "5b1da6c1d15b5af846c5194baa4758cc"; 
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?&units=metric&q=";
+
+const searchBox = document.querySelector(".search input");
+const searchBtn = document.querySelector(".search button");
+const weatherIcon = document.querySelector(".weather-icon");
+
+async function checkWeather(city) {
+    const response = await fetch(apiUrl + city + `&appid=${apikey}`);
+    
+    if (response.status === 404) {
+        document.querySelector(".error").style.display = "block"; 
+        document.querySelector(".weather").style.display = "none";
+    } else {
+        const data = await response.json();
+
+        document.querySelector(".city").innerHTML = data.name; 
+        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C"; 
+        document.querySelector(".humidity").innerHTML = data.main.humidity + "%"; 
+        document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+        
+        const iconCode = data.weather[0].icon;
+
+       
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+        
+        weatherIcon.src = iconUrl;
+
+        
+        document.querySelector(".weather").style.display = "block"; 
+        document.querySelector(".error").style.display = "none"; 
+    }
+}
+
+
+searchBtn.addEventListener("click", () => {
+    const city = searchBox.value.trim(); 
+    if (city) {
+        checkWeather(city); 
+    } else {
+        alert("Please enter a city name."); 
+    }
+});
+
+
+searchBox.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        const city = searchBox.value.trim();
+        if (city) {
+            checkWeather(city); 
+        } else {
+            alert("Please enter a city name.");
+        }
+    }
+});
+
+  </script>
+
+
+</body>
+</html>
